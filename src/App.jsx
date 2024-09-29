@@ -5,6 +5,7 @@ import { ToastContainer } from "react-toastify"
 import { ChakraProvider } from "@chakra-ui/react"
 import { HelmetProvider } from "react-helmet-async"
 import { Routes, Route, BrowserRouter } from "react-router-dom"
+import UploadMovie from "./pages/UploadMovie"
 
 function App() {
   return (
@@ -15,6 +16,7 @@ function App() {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/upload/:mixdrop" element={<UploadMovie />} />
               <Route path="*" element={<ErrorPage />} />
             </Routes>
           </BrowserRouter>
