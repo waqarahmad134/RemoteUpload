@@ -3,15 +3,14 @@ import React, { useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { FaCheckCircle } from "react-icons/fa"
 import { ImCancelCircle } from "react-icons/im"
+import Header from "../components/Header"
 
 export default function UploadMovie() {
   const [selectedFiles, setSelectedFiles] = useState(null)
   const [uploadComplete, setUploadComplete] = useState([])
-  console.log("🚀 ~ UploadMovie ~ uploadComplete:", uploadComplete)
   const [loader, setLoader] = useState(false)
   const [errorData, setErrorData] = useState(null)
   const [result, setResult] = useState(null)
-  const { mixdrop } = useParams()
 
   const handleFileChange = (e) => {
     setSelectedFiles(e.target.files)
@@ -74,48 +73,11 @@ export default function UploadMovie() {
     "Songs",
   ]
 
-  const mixdropItems = [
-    "Mixdrop1",
-    "Mixdrop2",
-    "Mixdrop3",
-    "Mixdrop4",
-    "Mixdrop5",
-    "Mixdrop6",
-  ]
+  
 
   return (
     <div className="bg-slate-200 h-screen">
-      <div>
-        <ul className="flex gap-3 justify-center py-4">
-          {mixdropItems.map((item, index) => (
-            <li
-              className={`${
-                mixdrop?.toLowerCase() === item?.toLowerCase()
-                  ? "font-semibold border-b-2 border-black"
-                  : "waqar"
-              }`}
-              key={index}
-            >
-              <Link
-                className="cursor-pointer"
-                to={`/upload/${item.toLowerCase()}`}
-                target="_blank"
-              >
-                {item}
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </div>
-      {/* <div className="uploader-container">
-        <div className="border border-gray-300 p-3">
-          {result?.map((data) => (
-            <div className="flex flex-col gap-2">{data?.file}</div>
-          ))}
-          {errorData?.[0]?.error}
-          {errorData?.[0]?.message}
-        </div>
-      </div> */}
+      <Header/>
       <div className="uploader-container">
         <div className="uploader-left">
           {loader ? (
