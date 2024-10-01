@@ -1,3 +1,4 @@
+import axios from "axios";
 import React, { useState } from "react"
 import { Link, useParams } from "react-router-dom"
 
@@ -11,6 +12,19 @@ export default function Header() {
     "Mixdrop5",
     "Mixdrop6",
   ]
+
+  const streamActionFunc = async () => {
+    try {
+      const res = await axios.get("https://api.streamwish.com/api/file/url_actions?key=20445huibnrwap8ww1pp4&restart_errors=1");
+      console.log("Success:", res.data); // Logs success response to the console
+      alert("Request was successful");
+    } catch (error) {
+      console.error("Error occurred:", error); // Logs any error to the console
+      alert("An error occurred");
+    }
+  };
+  
+
   return (
     <>
       <header className="flex items-center justify-between w-11/12 m-auto">
@@ -28,7 +42,7 @@ export default function Header() {
             System Upload
           </Link>
         </div>
-        <nav>
+        <nav className="flex flex-col">
           <ul className="flex gap-3 justify-center py-4">
             {mixdropItems?.map((item, index) => (
               <li
@@ -49,6 +63,23 @@ export default function Header() {
               </li>
             ))}
           </ul>
+          <div className="flex gap-3">
+            <button onClick={streamActionFunc}
+              className="border border-black px-2 py-1 rounded hover:bg-gray-400 transition-colors"
+            >
+              <img src="https://streamwish.com/wish_dark/images/logo.svg" className="w-[200px]" alt="streamwish" />
+            </button>
+            <button onClick={streamActionFunc}
+              className="border border-black px-2 py-1 rounded hover:bg-gray-400 transition-colors"
+            >
+              <img src="https://i.doodcdn.co/img/logo-s.png" className="w-[200px]" alt="streamwish" />
+            </button>
+            <button onClick={streamActionFunc}
+              className="bg-black border border-black px-2 py-1 rounded hover:bg-gray-400 transition-colors"
+            >
+              <img src="https://vidhide.com/vidhide/images/logo.svg" className="w-[200px]" alt="streamwish" />
+            </button>
+          </div>
         </nav>
       </header>
     </>

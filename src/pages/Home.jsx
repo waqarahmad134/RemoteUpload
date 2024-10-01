@@ -29,7 +29,7 @@ export default function Home() {
     setUploadComplete([])
     try {
       const parsedMovies = parseMovieUrls(movieUrls)
-      const response = await axios.post("http://localhost:5000/api/upload", {
+      const response = await axios.post("http://localhost:5000/api/remote", {
         movies: parsedMovies,
       })
       setUploadComplete(response.data)
