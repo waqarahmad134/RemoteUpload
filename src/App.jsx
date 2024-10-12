@@ -6,6 +6,7 @@ import { ChakraProvider } from "@chakra-ui/react"
 import { HelmetProvider } from "react-helmet-async"
 import { Routes, Route, BrowserRouter } from "react-router-dom"
 import UploadMovie from "./pages/UploadMovie"
+import RemoteMixdrop from "./pages/RemoteMixdrop"
 
 function App() {
   return (
@@ -16,6 +17,7 @@ function App() {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/remoteMixdrop" element={<RemoteMixdrop />} />
               <Route path="/upload/:mixdrop" element={<UploadMovie />} />
               <Route path="*" element={<ErrorPage />} />
             </Routes>

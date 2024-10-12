@@ -121,3 +121,11 @@ body {
     transform: rotate(360deg);
   }
 }
+
+.transparent-background-image {
+  filter: brightness(0) invert(1); /* This works for simple white background removal */
+}
+
+.blend-image {
+  mix-blend-mode: multiply; /* You can use multiply, screen, overlay, etc. */
+}

@@ -1,4 +1,4 @@
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import axios from "axios"
 import { FaCheckCircle } from "react-icons/fa"
 import { ImCancelCircle } from "react-icons/im"
@@ -9,34 +9,82 @@ export default function Home() {
   const [uploadComplete, setUploadComplete] = useState([])
   const [loader, setLoader] = useState(false)
   const [errorData, setErrorData] = useState(null)
+  const [categories, setCategories] = useState([])
+  const [selectedCategories, setSelectedCategories] = useState([])
+  console.log("🚀 ~ Home ~ selectedCategories:", selectedCategories)
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(
+          "https://backend.videosroom.com/public/api/categories"
+        )
+        setCategories(response?.data?.data)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    fetchCategories()
+  }, [])
+
+  const handleCheckboxChange = (event, category) => {
+    if (event.target.checked) {
+      setSelectedCategories([...selectedCategories, category])
+    } else {
+      setSelectedCategories(
+        selectedCategories.filter((item) => item !== category)
+      )
+    }
+  }
 
   const parseMovieUrls = (text) => {
-    const regex = /<!--(.*?)-->\s*(https?:\/\/[^\s]+)/g
+    const regex = /<!--(.*?)-->\s*(https?:\/\/[^\s]+)|\b(https?:\/\/[^\s]+)/g
     let matches
-    const result = []
-    while ((matches = regex.exec(text)) !== null) {
-      let title = matches[1].trim()
-      title = title.replace(/\.(mp4|mp3|avi|mkv|mov|flv|wmv|webm)$/i, "").trim()
-      const url = matches[2].trim()
-      result.push({ title, url })
+    const result = {
+      titled: [],
+      plain: [],
     }
+
+    while ((matches = regex.exec(text)) !== null) {
+      let title = ""
+      let url = ""
+      if (matches[1]) {
+        title = matches[1].trim()
+        title = title
+          .replace(/\.(mp4|mp3|avi|mkv|mov|flv|wmv|webm)$/i, "")
+          .trim()
+        url = matches[2].trim()
+        result.titled.push({ title, url })
+      } else {
+        // It's a plain URL
+        url = matches[3].trim()
+        result.plain.push({ url })
+      }
+    }
+
     return result
   }
+
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoader(true)
     setErrorData(null)
     setUploadComplete([])
+
     try {
       const parsedMovies = parseMovieUrls(movieUrls)
       const response = await axios.post("http://localhost:5000/api/remote", {
         movies: parsedMovies,
+        selectedCategories : selectedCategories,
       })
       setUploadComplete(response.data)
       setLoader(false)
+      setSelectedCategories([])
     } catch (error) {
       setErrorData(error.response?.data || "Something went wrong")
       setLoader(false)
+      setSelectedCategories([])
     }
   }
 
@@ -48,11 +96,11 @@ export default function Home() {
         </div>
       ) : (
         <div>
-          <Header/>
-          <div className="min-h-screen grid grid-cols-3 justify-center w-11/12 m-auto gap-2 my-5">
+          <Header />
+          <div className="grid grid-cols-3 justify-center w-11/12 m-auto gap-2 my-5">
             <form
               onSubmit={handleSubmit}
-              className="col-span-2 p-6 bg-white shadow-md rounded-md w-full h-[90vh]"
+              className="col-span-2 p-6 bg-white shadow-md rounded-md w-full"
             >
               <h1 className="text-2xl font-semibold mb-4">Submit Movie URLs</h1>
               <div className="mb-4">
@@ -62,14 +110,37 @@ export default function Home() {
                 >
                   Movie URLs (in the format of a comment and URL):
                 </label>
-                <textarea
-                  id="movieUrls"
-                  rows="16"
-                  className="w-full p-2 border rounded"
-                  value={movieUrls}
-                  onChange={(e) => setMovieUrls(e.target.value)}
-                  placeholder="Paste movie titles as comments and URLs here..."
-                />
+                <div className="grid grid-cols-3 gap-2">
+                  <div className="col-span-2">
+                    <textarea
+                      id="movieUrls"
+                      rows="13"
+                      className="w-full p-2 border rounded"
+                      value={movieUrls}
+                      onChange={(e) => setMovieUrls(e.target.value)}
+                      placeholder="Paste movie titles as comments and URLs here..."
+                    />
+                  </div>
+                  <div className="col-span-1">
+                    <form>
+                      {categories?.map((category, index) => (
+                        <div key={index}>
+                          <input
+                            type="checkbox"
+                            id={`category-${index}`}
+                            value={category?.id}
+                            onChange={(e) =>
+                              handleCheckboxChange(e, category?.id)
+                            }
+                          />
+                          <label htmlFor={`category-${index}`}>
+                            &nbsp;{category?.name}
+                          </label>
+                        </div>
+                      ))}
+                    </form>
+                  </div>
+                </div>
               </div>
 
               <div className="flex justify-between items-center">
@@ -84,12 +155,12 @@ export default function Home() {
               </div>
             </form>
             <div className="col-span-1">
-              {uploadComplete.length > 0 && (
+              {uploadComplete?.matchedMovies?.length > 0 && (
                 <div className="mt-4 p-4 bg-green-100 rounded-md">
                   <h3 className="text-green-700 font-semibold mb-2">
                     Submission Complete!
                   </h3>
-                  {uploadComplete.map((item, index) => (
+                  {uploadComplete?.matchedMovies?.map((item, index) => (
                     <p
                       key={index}
                       className={
@@ -101,10 +172,24 @@ export default function Home() {
                       ) : (
                         <FaCheckCircle className="inline-block mr-1" />
                       )}
-                      {item?.service} :{" "}
-                      {item?.result?.msg ||
-                        item?.result?.title ||
-                        item?.result?.message}
+                      {item?.error}
+                    </p>
+                  ))}
+                </div>
+              )}
+              {uploadComplete?.responses?.length > 0 && (
+                <div className="mt-4 p-4 bg-green-100 rounded-md">
+                  <h3 className="text-green-700 font-semibold mb-2">
+                    Submission Complete!
+                  </h3>
+                  {uploadComplete?.responses?.map((item, index) => (
+                    <p
+                      key={index}
+                      className={
+                        item?.status === 1 ? "text-red-500" : "text-green-600"
+                      }
+                    >
+                      {item?.service}
                     </p>
                   ))}
                 </div>

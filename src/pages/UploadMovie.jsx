@@ -1,5 +1,5 @@
 import axios from "axios"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { Link, useParams } from "react-router-dom"
 import { FaCheckCircle } from "react-icons/fa"
 import { ImCancelCircle } from "react-icons/im"
@@ -11,6 +11,33 @@ export default function UploadMovie() {
   const [loader, setLoader] = useState(false)
   const [errorData, setErrorData] = useState(null)
   const [result, setResult] = useState(null)
+  const [categories, setCategories] = useState([])
+  const [selectedCategories, setSelectedCategories] = useState([])
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const response = await axios.get(
+          "https://backend.videosroom.com/public/api/categories"
+        )
+        setCategories(response?.data?.data)
+      } catch (err) {
+        console.log(err)
+      }
+    }
+
+    fetchCategories()
+  }, [])
+
+  const handleCheckboxChange = (event, category) => {
+    if (event.target.checked) {
+      setSelectedCategories([...selectedCategories, category])
+    } else {
+      setSelectedCategories(
+        selectedCategories.filter((item) => item !== category)
+      )
+    }
+  }
 
   const handleFileChange = (e) => {
     setSelectedFiles(e.target.files)
@@ -24,10 +51,11 @@ export default function UploadMovie() {
     } else {
       setLoader(true)
       const formData = new FormData()
-      // Append each selected file to the FormData object
       Array.from(selectedFiles).forEach((file) => {
         formData.append("files", file)
       })
+      // formData.append("selectedCategories", selectedCategories)
+      formData.append("selectedCategories", JSON.stringify(selectedCategories));
 
       try {
         const response = await axios.post(
@@ -39,45 +67,27 @@ export default function UploadMovie() {
             },
           }
         )
-
         setUploadComplete(response?.data?.matchedMovies)
         setLoader(false)
-        console.log("response", response?.data)
+        setSelectedCategories([])
         setResult(
           response.data?.status === 1
             ? response?.data?.matchedMovies
             : "Waqar Se Poch bhai mujhe ni pata"
         )
-
-        const backendApiResults = response?.data
-          ?.filter((item) => item?.service === "Backend API")
-          ?.map((item) => item.result) // Extract the 'result' key
-
-        setErrorData(backendApiResults)
+        setErrorData(response?.data?.responses)
       } catch (error) {
         console.error("Error uploading files:", error)
         setErrorData(error)
         setLoader(false)
+        setSelectedCategories([])
       }
     }
   }
 
-  const categories = [
-    "Movie",
-    "Punjabi",
-    "English",
-    "Netflix",
-    "Series",
-    "Drama",
-    "Cartoon",
-    "Songs",
-  ]
-
-  
-
   return (
     <div className="bg-slate-200 h-screen">
-      <Header/>
+      <Header />
       <div className="uploader-container">
         <div className="uploader-left">
           {loader ? (
@@ -85,22 +95,24 @@ export default function UploadMovie() {
               <span className="loader"></span>
             </div>
           ) : (
-            <div className="border border-gray-300 p-3">
-              <h3>File Uploader</h3>
-              <form onSubmit={handleSubmit} encType="multipart/form-data">
-                <input
-                  type="file"
-                  name="files"
-                  multiple
-                  onChange={handleFileChange}
-                />
-                <button
-                  className="inline-flex py-2.5 px-4 rounded bg-black text-white"
-                  type="submit"
-                >
-                  Upload
-                </button>
-                {/* {categories?.map((data, index) => (
+            <>
+              <div className="border border-gray-300 p-3 grid grid-cols-3 gap-3">
+                <div className="col-span-2">
+                <h3>File Uploader</h3>
+                <form className="flex items-center" onSubmit={handleSubmit} encType="multipart/form-data">
+                  <input
+                    type="file"
+                    name="files"
+                    multiple
+                    onChange={handleFileChange}
+                  />
+                  <button
+                    className="inline-flex py-2.5 px-4 rounded bg-black text-white"
+                    type="submit"
+                  >
+                    Upload
+                  </button>
+                  {/* {categories?.map((data, index) => (
                   <div className="flex items-center">
                     <input
                       key={index}
@@ -117,8 +129,28 @@ export default function UploadMovie() {
                     </label>
                   </div>
                 ))} */}
-              </form>
-            </div>
+                </form>
+                </div>
+                <div className="col-span-1">
+                <form >
+                  {categories?.map((category, index) => (
+                    <div key={index}>
+                      <input
+                        type="checkbox"
+                        id={`category-${index}`}
+                        value={category?.id}
+                        onChange={(e) => handleCheckboxChange(e, category?.id)}
+                      />
+                      <label htmlFor={`category-${index}`}>
+                        &nbsp;{category?.name}
+                      </label>
+                    </div>
+                  ))}
+                </form>
+              </div>
+              </div>
+            
+            </>
           )}
         </div>
 
@@ -149,6 +181,9 @@ export default function UploadMovie() {
                         ? `${file.name.substring(0, 30)}...`
                         : file.name}
                     </p>
+                    {errorData?.map((data) => (
+                      <div>{data?.service} Uploaded</div>
+                    ))}
                   </div>
                 </div>
               ))}
