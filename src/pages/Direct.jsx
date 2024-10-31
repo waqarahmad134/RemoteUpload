@@ -284,7 +284,9 @@ export default function Direct() {
         </div>
       ) : (
         <div>
-          <Header />
+          <div className="hidden sm:block">
+            <Header />
+          </div>
           <div className="w-11/12 m-auto">
             <button onClick={onOpen}>
               <img
@@ -293,7 +295,7 @@ export default function Direct() {
               />
             </button>
           </div>
-          <div className="grid grid-cols-3 justify-center w-11/12 m-auto gap-2 my-5">
+          <div className="grid sm:grid-cols-3 justify-center w-11/12 m-auto gap-2 my-5">
             <form
               onSubmit={handleSubmit}
               className="col-span-2 p-6 bg-white shadow-md rounded-md w-full"
@@ -308,7 +310,7 @@ export default function Direct() {
                 >
                   Movie URLs (in the format of a comment and URL):
                 </label>
-                <div className="grid grid-cols-3 gap-2">
+                <div className="grid sm:grid-cols-3 gap-2">
                   <div className="col-span-2">
                     <textarea
                       id="movieUrls"
