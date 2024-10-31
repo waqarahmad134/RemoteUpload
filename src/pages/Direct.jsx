@@ -125,7 +125,7 @@ export default function Direct() {
       const movieUrl = movieUrls.split('\n').map(url => url.trim()).filter(url => url.length > 0);
 
       const response = await axios.post(
-        "http://localhost:5000/api/remoteStreamTape",
+        "http://13.61.73.243/api/remoteStreamTape",
         {
           movies: movieUrl,
           selectedCategories: selectedCategories,
