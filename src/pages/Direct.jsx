@@ -3,7 +3,6 @@ import axios from "axios"
 import { FaCheckCircle } from "react-icons/fa"
 import { ImCancelCircle } from "react-icons/im"
 import Header from "../components/Header"
-import { useParams } from "react-router-dom"
 import {
   Modal,
   ModalOverlay,
@@ -15,7 +14,7 @@ import {
   useDisclosure,
 } from "@chakra-ui/react"
 
-export default function RemoteMixdrop() {
+export default function Direct() {
   const { isOpen, onOpen, onClose } = useDisclosure()
   const [movieUrls, setMovieUrls] = useState("")
   const [uploadComplete, setUploadComplete] = useState([])
@@ -47,7 +46,6 @@ export default function RemoteMixdrop() {
       setStreamwishEmail(data.streamwishEmail || "")
       setStreamwishKey(data.streamwishKey || "")
     } else {
-      // Fallback initial data if localStorage is empty
       const initialData = {
         mixEmail: "videosroomofficial@gmail.com",
         mixKey: "I0nHwRrugSJwRUl6ScSe",
@@ -116,33 +114,6 @@ export default function RemoteMixdrop() {
     }
   }
 
-  const parseMovieUrls = (text) => {
-    const regex = /<!--(.*?)-->\s*(https?:\/\/[^\s]+)|\b(https?:\/\/[^\s]+)/g
-    let matches
-    const result = {
-      titled: [],
-      plain: [],
-    }
-
-    while ((matches = regex.exec(text)) !== null) {
-      let title = ""
-      let url = ""
-      if (matches[1]) {
-        title = matches[1].trim()
-        title = title
-          .replace(/\.(mp4|mp3|avi|mkv|mov|flv|wmv|webm)$/i, "")
-          .trim()
-        url = matches[2].trim()
-        result.titled.push({ title, url })
-      } else {
-        // It's a plain URL
-        url = matches[3].trim()
-        result.plain.push({ url })
-      }
-    }
-    return result
-  }
-
   const handleSubmit = async (e) => {
     e.preventDefault()
     setLoader(true)
@@ -150,16 +121,18 @@ export default function RemoteMixdrop() {
     setUploadComplete([])
 
     try {
-      const parsedMovies = parseMovieUrls(movieUrls)
       const savedData = localStorage.getItem("accountData")
+      const movieUrl = movieUrls.split('\n').map(url => url.trim()).filter(url => url.length > 0);
+
       const response = await axios.post(
-        "http://localhost:5000/api/remoteMixdrop",
+        "http://localhost:5000/api/remoteStreamTape",
         {
-          movies: parsedMovies,
+          movies: movieUrl,
           selectedCategories: selectedCategories,
           accountData: savedData,
         }
       )
+      console.log("🚀 ~ handleSubmit ~ response:", response)
       setLoginError(response?.data?.message)
       setUploadComplete(response.data)
       setLoader(false)
@@ -170,7 +143,7 @@ export default function RemoteMixdrop() {
       setSelectedCategories([])
     }
   }
-
+ 
   return (
     <>
       <Modal isOpen={isOpen} size="xl" onClose={onClose}>
@@ -326,7 +299,7 @@ export default function RemoteMixdrop() {
               className="col-span-2 p-6 bg-white shadow-md rounded-md w-full"
             >
               <h1 className="text-2xl font-semibold mb-4">
-                Submit Movie URLs using 3rd party like MIXDROP , Doodli
+                Submit Movie Doodli , StreamTape , Videhide , FileMoon
               </h1>
               <div className="mb-4">
                 <label

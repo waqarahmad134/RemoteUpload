@@ -7,6 +7,7 @@ import { HelmetProvider } from "react-helmet-async"
 import { Routes, Route, BrowserRouter } from "react-router-dom"
 import UploadMovie from "./pages/UploadMovie"
 import RemoteMixdrop from "./pages/RemoteMixdrop"
+import Direct from "./pages/Direct"
 
 function App() {
   return (
@@ -17,6 +18,7 @@ function App() {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/direct" element={<Direct />} />
               <Route path="/remoteMixdrop" element={<RemoteMixdrop />} />
               <Route path="/upload/:mixdrop" element={<UploadMovie />} />
               <Route path="*" element={<ErrorPage />} />
