@@ -305,7 +305,7 @@ export default function Direct() {
               </h1>
               <div className="mb-4">
                 <label
-                  className="block text-gray-700 text-sm font-bold mb-2"
+                  className="block  text-red-400 sm:text-gray-700 text-sm font-bold mb-2"
                   htmlFor="movieUrls"
                 >
                   Movie URLs (in the format of a comment and URL):
