@@ -66,13 +66,7 @@ export default function Header() {
             to={`/`}
             className={`flex gap-2 items-center border border-black text-black px-4 py-2 rounded hover:bg-blue-600 hover:text-white transition-colors ${page == undefined ? "bg-blue-400" : "w1"} `}
           >
-            Remote Upload <img src="https://cdn4.iconfinder.com/data/icons/cloud-computing-28/24/remote-cdn-cloud-upload-up--512.png"   className="w-12 blend-image"alt="" />
-          </Link>
-          <Link
-            to={`/upload/mixdrop1`}
-            className={`flex gap-2 items-center border border-black text-black px-4 py-2 rounded hover:bg-blue-600 hover:text-white transition-colors ${page === "mixdrop1" ? "bg-blue-400" : "w1"} `}
-          >
-            System Upload <img src="https://cdn4.iconfinder.com/data/icons/folders-64/512/Folder_Download-512.png"  className="w-12 blend-image" alt="" />
+            Direct <img src="https://cdn4.iconfinder.com/data/icons/cloud-computing-28/24/remote-cdn-cloud-upload-up--512.png"   className="w-12 blend-image"alt="" />
           </Link>
           <Link
             to={`/remoteMixdrop`}
@@ -82,26 +76,6 @@ export default function Header() {
           </Link>
         </div>
         <nav className="flex flex-col">
-          {/* <ul className="flex gap-3 justify-center py-4">
-            {mixdropItems?.map((item, index) => (
-              <li
-                className={`${
-                  mixdrop?.toLowerCase() === item?.toLowerCase()
-                    ? "font-semibold border-b-2 border-black"
-                    : "waqar"
-                }`}
-                key={index}
-              >
-                <Link
-                  className="cursor-pointer"
-                  to={`/upload/${item.toLowerCase()}`}
-                  target="_blank"
-                >
-                  {item}
-                </Link>
-              </li>
-            ))}
-          </ul> */}
           <div className="flex gap-3">
             <button onClick={streamActionFunc}
               className="border border-black px-2 py-1 rounded hover:bg-gray-400 transition-colors"

@@ -17,10 +17,8 @@ function App() {
         <ChakraProvider>
           <BrowserRouter>
             <Routes>
-              <Route path="/main" element={<Home />} />
               <Route path="/" element={<Direct />} />
-              <Route path="/remoteMixdrop" element={<RemoteMixdrop />} />
-              <Route path="/upload/:mixdrop" element={<UploadMovie />} />
+              <Route path="/remoteMixdrop" element={<Home />} />
               <Route path="*" element={<ErrorPage />} />
             </Routes>
           </BrowserRouter>

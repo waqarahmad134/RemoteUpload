@@ -123,16 +123,14 @@ export default function Direct() {
     try {
       const savedData = localStorage.getItem("accountData")
       const movieUrl = movieUrls.split('\n').map(url => url.trim()).filter(url => url.length > 0);
-
       const response = await axios.post(
-        "https://13.61.73.243/api/remoteStreamTape",
+        "http://182.176.87.209:5000/api/directUpload",
         {
           movies: movieUrl,
           selectedCategories: selectedCategories,
           accountData: savedData,
         }
       )
-      console.log("🚀 ~ handleSubmit ~ response:", response)
       setLoginError(response?.data?.message)
       setUploadComplete(response.data)
       setLoader(false)
