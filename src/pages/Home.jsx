@@ -83,8 +83,7 @@ export default function Home() {
     onClose()
     window.location.reload()
   }
-  
-  
+
   // Usage
 
   useEffect(() => {
@@ -122,6 +121,7 @@ export default function Home() {
     const result = {
       titled: [],
       plain: [],
+      rumble: [],
     }
 
     while ((matches = regex.exec(text)) !== null) {
@@ -135,9 +135,12 @@ export default function Home() {
         url = matches[2].trim()
         result.titled.push({ title, url })
       } else {
-        // It's a plain URL
         url = matches[3].trim()
-        result.plain.push({ url })
+        if (url.includes("rumble.com")) {
+          result.rumble.push({ url })
+        } else {
+          result.plain.push({ url })
+        }
       }
     }
 
@@ -153,7 +156,7 @@ export default function Home() {
     try {
       const savedData = localStorage.getItem("accountData")
       const parsedMovies = parseMovieUrls(movieUrls)
-      const response = await axios.post("http://182.176.87.209:5000/api/allRemote", {
+      const response = await axios.post("http://localhost:5000/api/allRemote", {
         movies: parsedMovies,
         selectedCategories: selectedCategories,
         accountData: savedData,
